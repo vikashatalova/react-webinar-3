@@ -28,8 +28,8 @@ function App({store}) {
                 <div className='Item-code'>{item.code}</div>
                 <div className='Item-title'>
                   <p className='Item-header'>{item.title}</p>
-                  {item.selectionItem && (
-                    <p>Выделяли {item.selectionItem} раз</p>
+                  {item.selectionCount > 0 &&  (
+                    <p>Выделяли {item.selectionCount} раз</p>
                   )}
                 </div>
                 <div className='Item-actions'>
