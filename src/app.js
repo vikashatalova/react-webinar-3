@@ -14,7 +14,10 @@ import Count from './components/count';
 function App({store}) {
 
   const list = store.getState().list;
+  const cart = store.getCart();
+  console.log(cart);
   const [isOpen, setOpen] = useState(false);
+  const [modalItems, setModalItems] = useState([]);
 
 
   const callbacks = {
@@ -26,10 +29,19 @@ function App({store}) {
       store.selectItem(code);
     }, [store]),
 
-    onAddItem: useCallback(() => {
-      store.addItem();
-    }, [store])
+    onAddItem: useCallback((code) => {
+      store.addItem(code);
+    }, [store]),
+    addItemToCart: useCallback((item) => {
+      store.addItemToCart(item);
+      setModalItems([...modalItems, item]);
+      console.log('Товар добавлен:', item);
+    },[cart, modalItems]),
   }
+
+  const getCartItem = useCallback((code) => {
+    store.getCartItem(code);
+  },[store]);
 
   const openModal = () => {
     setOpen(true);
@@ -40,14 +52,21 @@ function App({store}) {
 
   return (
     <PageLayout>
-      <Head title='Приложение на чистом JS'/>
-      <Controls onAdd={callbacks.onAddItem} onOpenModal={() => openModal()}>
-        <Count count={'count'} sum={'sum'}/>
+      <Head title='Магазин'/>
+      <Controls onOpenModal={() => openModal()}>
+        <Count count={cart.list.length} sum={cart.total}/>
       </Controls>
-      {isOpen && <Modal onCloseModal={() => closeModal()} item={list}/>}
+      {isOpen && <Modal 
+              onCloseModal={() => closeModal()} 
+              item={modalItems} 
+              onAddItem={callbacks.addItemToCart} 
+              getCartItem={getCartItem}
+      />}
       <List list={list}
             onDeleteItem={callbacks.onDeleteItem}
-            onSelectItem={callbacks.onSelectItem}/>
+            onSelectItem={callbacks.onSelectItem}
+            onAddItem={callbacks.addItemToCart}
+            />
     </PageLayout>
   );
 }

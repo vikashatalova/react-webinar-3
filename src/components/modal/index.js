@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import './index.css';
 
@@ -8,15 +8,29 @@ function Modal({ onCloseModal, item, onDelete }){
         <>
         <div className='Modal'>
             <div className='Modal-head'>
-                <h1>{"Корзина"}</h1> 
+                <h1>Корзина</h1> 
                 <button onClick={onCloseModal}>Закрыть</button>
             </div>
             <div className='Modal-body'>
-                <h2>Текущий товар:</h2>
-                <p>{item.title}</p>
-                {/* Другие свойства товара */}
+                {item.length > 0 ? item.map((item, index) => (
+                    <div key={item.code} className='Modal-item'>
+                        <div className='Item'>
+                            <div className='Item-code'>{index + 1}</div>
+                            <div className='Item-title'>
+                                <p>{item.title}</p>
+                                <p>{item.price} ₽</p>
+                            </div>
+                            <div className='Item-number'>{item.count} шт</div>
+                            <div className='Item-actions'>
+                                <button onClick={onDelete}>Удалить</button>
+                            </div>
+                        </div>
+                    </div>
+                )): <h2>Ваша корзина пуста</h2>}
+                <div className='Modal-footer'>
+                    <p>Итого: {item.price}</p>
+                </div>
             </div>
-            <button onClick={onDelete}>Удалить из корзины</button>
         </div>
         </>
     );

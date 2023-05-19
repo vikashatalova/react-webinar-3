@@ -4,21 +4,16 @@ import {plural} from "../../utils";
 import './style.css';
 
 function Item(props){
-
+  const [count, setCount] = useState(0);
 
   const callbacks = {
-    // onClick: () => {
-    //   props.onSelect(props.item.code);
-    //   if (!props.item.selected) {
-    //     setCount(count + 1);
-    //   }
-    // },
     onDelete: (e) => {
       e.stopPropagation();
       props.onDelete(props.item.code);
     },
     onAdd: () => {
-      console.log('ok');
+      props.onAddItem(props.item);
+      setCount(count + 1);
     }
   }
 

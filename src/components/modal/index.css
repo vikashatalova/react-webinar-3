@@ -18,3 +18,35 @@
     background: #f5f5f5;
     border-radius: 10px;
 }
+
+.Modal-body {
+    padding: 10px 20px;
+}
+
+.Modal-item {
+    border-bottom: 1px dashed #ccc;
+}
+
+.Item {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+}
+
+.Item-title {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    padding: 5px 10px;
+}
+
+.Item-number {
+    padding: 5px 10px;
+}
+
+.Item-actions {
+    display: flex;
+    justify-content: flex-end;
+    padding: 20px 20px 20px 10px;
+}

@@ -7,7 +7,8 @@ class Store {
   constructor(initState = {}) {
     this.state = initState;
     this.listeners = []; // Слушатели изменений состояния
-    this.cartItem = [];
+    this.card = [];
+    this.cartItem = { total: 0, list: [] };
   }
 
   /**
@@ -30,6 +31,13 @@ class Store {
   getState() {
     return this.state;
   }
+  getCart() {
+    return this.cartItem;
+  }
+  getCartItem(code) {
+    let filteredItem = this.findItem(code);
+    return filteredItem;
+  }
 
   /**
    * Установка состояния
@@ -40,16 +48,54 @@ class Store {
     // Вызываем всех слушателей
     for (const listener of this.listeners) listener();
   }
+  setCart(newCartItem) {
+    const currentTotal = this.cartItem.total || 0;
+    const itemPrice = newCartItem.price; 
+
+    const newTotal = currentTotal + itemPrice;
+
+    this.cartItem = {
+      total: newTotal,
+      list: [...this.cartItem.list, newCartItem.code],
+    };
+
+    // Вызываем всех слушателей
+    for (const listener of this.listeners) listener();
+  }
 
   /**
    * Добавление новой записи
    */
-  addItem() {
-    this.setState({
-      ...this.state,
-      list: [...this.state.list, {code: generateCode(), title: 'Новая запись'}]
-    })
-  };
+    addItem() {
+      this.setState({
+        ...this.state,
+        list: [...this.state.list, {code: generateCode(), title: 'Новая запись'}]
+      })
+    };
+
+    addItemToCart(item) {
+      const code = item.code;
+      const updatedList = this.state.list.map((listItem) => {
+        if (listItem.code === code) {
+          return {
+            ...listItem,
+            selected: !listItem.selected,
+            count: listItem.selected ? listItem.count : listItem.count + 1 || 1,
+          };
+        }
+        return listItem;
+      });
+    
+      const currentTotal = this.cartItem.total || 0;
+      const updatedTotal = currentTotal + item.price;
+    
+      const updatedCartItem = {
+        total: updatedTotal,
+        list: [...this.cartItem.list, item.code],
+      };
+  
+      this.setCart(updatedCartItem);
+    }
 
   /**
    * Удаление записи по коду
@@ -62,6 +108,9 @@ class Store {
       list: this.state.list.filter(item => item.code !== code)
     })
   };
+  findItem(code) {
+    return this.state.list.filter((item) => item.code === code);
+  }
 
   /**
    * Выделение записи по коду
