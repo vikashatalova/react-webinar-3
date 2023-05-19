@@ -1,17 +1,21 @@
-import React from "react";
+import React, { Children } from "react";
 import PropTypes from 'prop-types';
 import './style.css';
 
-function Controls({onAdd}){
+function Controls({onAdd, onOpenModal, children}){
   return (
     <div className='Controls'>
-      <button onClick={() => onAdd()}>Добавить</button>
+      {children}
+      {/* <button onClick={() => onAdd()}>Добавить</button> */}
+      <button onClick={onOpenModal}>Перейти</button>
     </div>
   )
 }
 
 Controls.propTypes = {
-  onAdd: PropTypes.func
+  onAdd: PropTypes.func,
+  onOpenModal: PropTypes.func,
+  children: PropTypes.node
 };
 
 Controls.defaultProps = {

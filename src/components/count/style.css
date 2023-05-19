@@ -1,0 +1,13 @@
+.Count {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.Count h4 {
+    margin-right: 15px;
+}
+
+.Count p {
+    margin-right: 15px;
+}
