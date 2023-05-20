@@ -3,6 +3,13 @@ import PropTypes from 'prop-types';
 import './index.css';
 
 function Modal({ onCloseModal, item, onDelete }){
+    console.log(item);
+    const callbacks = {
+        onDelete: (code) => {
+          onDelete(code);
+        }
+    }
+    const totalPrice = item.reduce((total, currentItem) => total + currentItem.price, 0);
 
     return (
         <>
@@ -12,24 +19,26 @@ function Modal({ onCloseModal, item, onDelete }){
                 <button onClick={onCloseModal}>Закрыть</button>
             </div>
             <div className='Modal-body'>
-                {item.length > 0 ? item.map((item, index) => (
-                    <div key={item.code} className='Modal-item'>
+                {item.length > 0 ? item.map((modalItem, index) => (
+                    <div key={modalItem.code} className='Modal-item'>
                         <div className='Item'>
                             <div className='Item-code'>{index + 1}</div>
                             <div className='Item-title'>
-                                <p>{item.title}</p>
-                                <p>{item.price} ₽</p>
+                                <p>{modalItem.title}</p>
+                                <p>{modalItem.price} ₽</p>
                             </div>
-                            <div className='Item-number'>{item.count} шт</div>
+                            <div className='Item-number'>{modalItem.code} шт</div>
                             <div className='Item-actions'>
-                                <button onClick={onDelete}>Удалить</button>
+                                <button onClick={() => console.log(modalItem.code)}>Удалить</button>
                             </div>
                         </div>
                     </div>
                 )): <h2>Ваша корзина пуста</h2>}
-                <div className='Modal-footer'>
-                    <p>Итого: {item.price}</p>
-                </div>
+                {item && 
+                    <div className='Modal-footer'>
+                        <p>Итого: {totalPrice}</p>
+                    </div>
+                }
             </div>
         </div>
         </>

@@ -49,16 +49,8 @@ class Store {
     for (const listener of this.listeners) listener();
   }
   setCart(newCartItem) {
-    const currentTotal = this.cartItem.total || 0;
-    const itemPrice = newCartItem.price; 
-
-    const newTotal = currentTotal + itemPrice;
-
-    this.cartItem = {
-      total: newTotal,
-      list: [...this.cartItem.list, newCartItem.code],
-    };
-
+    this.cartItem = newCartItem;
+    
     // Вызываем всех слушателей
     for (const listener of this.listeners) listener();
   }
@@ -85,16 +77,15 @@ class Store {
         }
         return listItem;
       });
-    
-      const currentTotal = this.cartItem.total || 0;
-      const updatedTotal = currentTotal + item.price;
-    
-      const updatedCartItem = {
+
+      const updatedTotal = this.cartItem.total + item.price;
+
+      const newCartItem = {
         total: updatedTotal,
         list: [...this.cartItem.list, item.code],
       };
-  
-      this.setCart(updatedCartItem);
+
+      this.setCart(newCartItem);
     }
 
   /**
@@ -102,11 +93,21 @@ class Store {
    * @param code
    */
   deleteItem(code) {
+    const updatedList = this.state.list.filter(item => item.code !== code);
+    const updatedCartItem = {
+      ...this.cartItem,
+      list: updatedList,
+    };
+    this.setCart(updatedCartItem);
     this.setState({
       ...this.state,
-      // Новый список, в котором не будет удаляемой записи
-      list: this.state.list.filter(item => item.code !== code)
-    })
+      list: updatedList,
+    });
+    // this.setState({
+    //   ...this.state,
+    //   // Новый список, в котором не будет удаляемой записи
+    //   list: this.state.list.filter(item => item.code !== code)
+    // })
   };
   findItem(code) {
     return this.state.list.filter((item) => item.code === code);

@@ -7,10 +7,10 @@ function Item(props){
   const [count, setCount] = useState(0);
 
   const callbacks = {
-    onDelete: (e) => {
-      e.stopPropagation();
-      props.onDelete(props.item.code);
-    },
+    // onDelete: (e) => {
+    //   e.stopPropagation();
+    //   props.onDelete(props.item.code);
+    // },
     onAdd: () => {
       props.onAddItem(props.item);
       setCount(count + 1);

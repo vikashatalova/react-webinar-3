@@ -15,13 +15,13 @@ function App({store}) {
 
   const list = store.getState().list;
   const cart = store.getCart();
-  console.log(cart);
   const [isOpen, setOpen] = useState(false);
   const [modalItems, setModalItems] = useState([]);
 
 
   const callbacks = {
     onDeleteItem: useCallback((code) => {
+      console.log(code);
       store.deleteItem(code);
     }, [store]),
 
@@ -40,7 +40,7 @@ function App({store}) {
   }
 
   const getCartItem = useCallback((code) => {
-    store.getCartItem(code);
+    return store.getCartItem(code);
   },[store]);
 
   const openModal = () => {
@@ -59,11 +59,10 @@ function App({store}) {
       {isOpen && <Modal 
               onCloseModal={() => closeModal()} 
               item={modalItems} 
-              onAddItem={callbacks.addItemToCart} 
+              onDelete={callbacks.onDeleteItem}
               getCartItem={getCartItem}
       />}
       <List list={list}
-            onDeleteItem={callbacks.onDeleteItem}
             onSelectItem={callbacks.onSelectItem}
             onAddItem={callbacks.addItemToCart}
             />
