@@ -1,4 +1,4 @@
-import React, {useCallback, useState} from 'react';
+import React, {useCallback, useState, useEffect} from 'react';
 import List from "./components/list";
 import Controls from "./components/controls";
 import Head from "./components/head";
@@ -15,14 +15,17 @@ function App({store}) {
 
   const list = store.getState().list;
   const cart = store.getCart();
+  const [count, setCount] = useState(0);
   const [isOpen, setOpen] = useState(false);
   const [modalItems, setModalItems] = useState([]);
 
-
   const callbacks = {
     onDeleteItem: useCallback((code) => {
-      console.log(code);
+      const updatedModalItems = modalItems.filter((item) => item.code !== code);
+      setModalItems(updatedModalItems);
       store.deleteItem(code);
+
+      updateCartData();
     }, [store]),
 
     onSelectItem: useCallback((code) => {
@@ -35,9 +38,14 @@ function App({store}) {
     addItemToCart: useCallback((item) => {
       store.addItemToCart(item);
       setModalItems([...modalItems, item]);
-      console.log('Товар добавлен:', item);
-    },[cart, modalItems]),
+      updateCartData();
+    },[cart, modalItems, list, updateCartData]),
   }
+
+  const updateCartData = useCallback(() => {
+    const count = cart.list.length;
+    setCount(count);
+  }, [cart, store]);
 
   const getCartItem = useCallback((code) => {
     return store.getCartItem(code);
@@ -50,11 +58,15 @@ function App({store}) {
     setOpen(false);
   };
 
+  useEffect(() => {
+    updateCartData();
+  }, [updateCartData]);
+
   return (
     <PageLayout>
       <Head title='Магазин'/>
       <Controls onOpenModal={() => openModal()}>
-        <Count count={cart.list.length} sum={cart.total}/>
+        <Count count={count} sum={cart.total}/>
       </Controls>
       {isOpen && <Modal 
               onCloseModal={() => closeModal()} 

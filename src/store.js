@@ -7,7 +7,6 @@ class Store {
   constructor(initState = {}) {
     this.state = initState;
     this.listeners = []; // Слушатели изменений состояния
-    this.card = [];
     this.cartItem = { total: 0, list: [] };
   }
 
@@ -58,56 +57,58 @@ class Store {
   /**
    * Добавление новой записи
    */
-    addItem() {
-      this.setState({
-        ...this.state,
-        list: [...this.state.list, {code: generateCode(), title: 'Новая запись'}]
-      })
+  addItem() {
+    this.setState({
+      ...this.state,
+      list: [...this.state.list, {code: generateCode(), title: 'Новая запись'}]
+    })
+  };
+
+  addItemToCart(item) {
+  const foundItem = this.cartItem.list.find((cartItem) => cartItem.code === item.code);
+
+  if (foundItem) {
+    const updatedList = this.cartItem.list.map((cartItem) => {
+    if (cartItem.code === item.code) {
+      const updatedCount = cartItem.count ? cartItem.count + 1 : 1;
+      return {
+        ...cartItem,
+        count: updatedCount,
+        price: item.price,
+      };
+    }
+    return cartItem;
+  });
+
+  const updatedTotal = updatedList.reduce(
+    (total, cartItem) => total + (cartItem.price * (cartItem.count || 0)),0
+  );
+
+  const newCartItem = {
+    total: updatedTotal,
+    list: updatedList,
+  };
+
+  this.setCart(newCartItem);
+  } else {
+    const newCartItem = {
+      total: this.cartItem.total + item.price,
+      list: [...this.cartItem.list, { ...item, count: 1 }],
     };
 
-    addItemToCart(item) {
-      const code = item.code;
-      const updatedList = this.state.list.map((listItem) => {
-        if (listItem.code === code) {
-          return {
-            ...listItem,
-            selected: !listItem.selected,
-            count: listItem.selected ? listItem.count : listItem.count + 1 || 1,
-          };
-        }
-        return listItem;
-      });
-
-      const updatedTotal = this.cartItem.total + item.price;
-
-      const newCartItem = {
-        total: updatedTotal,
-        list: [...this.cartItem.list, item.code],
-      };
-
-      this.setCart(newCartItem);
-    }
+    this.setCart(newCartItem);
+  }
+  }
 
   /**
    * Удаление записи по коду
    * @param code
    */
   deleteItem(code) {
-    const updatedList = this.state.list.filter(item => item.code !== code);
-    const updatedCartItem = {
-      ...this.cartItem,
-      list: updatedList,
-    };
-    this.setCart(updatedCartItem);
     this.setState({
       ...this.state,
-      list: updatedList,
+      list: this.state.list.filter(item => item.code !== code),
     });
-    // this.setState({
-    //   ...this.state,
-    //   // Новый список, в котором не будет удаляемой записи
-    //   list: this.state.list.filter(item => item.code !== code)
-    // })
   };
   findItem(code) {
     return this.state.list.filter((item) => item.code === code);
